@@ -11,6 +11,10 @@
                  [environ "0.2.1"]
                  [com.cemerick/drawbridge "0.0.6"]]
   :min-lein-version "2.0.0"
-  :plugins [[environ/environ.lein "0.2.1"]]
+  :plugins [[environ/environ.lein "0.2.1"]
+            [speclj "2.5.0"]]
   :hooks [environ.leiningen.hooks]
-  :profiles {:production {:env {:production true}}})
+  :profiles {:production {:env {:production true}}
+             :dev {:dependencies [[speclj "2.7.0"]
+                                  [peridot "0.2.2"]]}})
+
