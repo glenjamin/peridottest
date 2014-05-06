@@ -6,7 +6,7 @@
 (describe "peridottest.web"
   (context "/"
     (it "parses params"
-      (should= "{\"b\" \"2\", \"a\" \"1\"}"
+      (should= "{:b \"2\", :a \"1\"}"
                (get-in (-> (session app)
                            (request "/" :request-method :get
                                         :params {"a" "1"

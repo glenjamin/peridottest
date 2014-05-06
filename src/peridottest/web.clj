@@ -26,7 +26,7 @@
   (ANY "/" [:as request]
        {:status 200
         :headers {"Content-Type" "text/plain"}
-        :body (str (:params request))})
+        :body (pr-str (:params request))})
   (ANY "*" []
        (route/not-found (slurp (io/resource "404.html")))))
 
