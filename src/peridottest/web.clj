@@ -20,7 +20,7 @@
       (session/wrap-session)
       (basic/wrap-basic-authentication authenticated?)))
 
-(defroutes app
+(defroutes routes
   (ANY "/repl" {:as req}
        (drawbridge req))
   (ANY "/" [:as request]
@@ -38,16 +38,17 @@
             :headers {"Content-Type" "text/html"}
             :body (slurp (io/resource "500.html"))}))))
 
+(let [;; TODO: heroku config:add SESSION_SECRET=$RANDOM_16_CHARS
+      store (cookie/cookie-store {:key (env :session-secret)})]
+  (def app (-> #'routes
+               ((if (env :production)
+                  wrap-error-page
+                  trace/wrap-stacktrace))
+               (site {:session {:store store}}))))
+
 (defn -main [& [port]]
-  (let [port (Integer. (or port (env :port) 5000))
-        ;; TODO: heroku config:add SESSION_SECRET=$RANDOM_16_CHARS
-        store (cookie/cookie-store {:key (env :session-secret)})]
-    (jetty/run-jetty (-> #'app
-                         ((if (env :production)
-                            wrap-error-page
-                            trace/wrap-stacktrace))
-                         (site {:session {:store store}}))
-                     {:port port :join? false})))
+  (let [port (Integer. (or port (env :port) 5000))]
+    (jetty/run-jetty app {:port port :join? false})))
 
 ;; For interactive development:
 ;; (.stop server)
